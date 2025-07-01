@@ -1,0 +1,30 @@
+# サーバー設定
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# データソース設定（接続プール）
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: jdbc:mysql:///sm_db
+      username: root
+      password: 112114
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+# mybatis-plus の設定
+mybatis-plus:
+  type-aliases-package: com.example.pojo
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted  # 論理削除フラグのフィールド
+      id-type: auto  # 主キー戦略（自動増分）
+      table-prefix: news_  # テーブル接頭辞
+
+# JWT 設定
+jwt:
+  token:
+    tokenExpiration: 120  # トークンの有効期限（分単位）
+    tokenSignKey: headline123456  # トークン署名用の秘密キー

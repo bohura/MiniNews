@@ -1,0 +1,49 @@
+### IntelliJ IDEA 関連 ###
+.idea/
+*.iml
+*.iws
+out/
+shelf/
+workspace.xml
+httpRequests/
+mavenHomeManager.xml
+dataSources/
+dataSources.local.xml
+
+### ビルド成果物 ###
+target/
+bin/
+build/
+
+### ログファイル ###
+*.log
+
+### 一時ファイル・バックアップ ###
+*.tmp
+*.swp
+*.bak
+*.orig
+*.rej
+
+### OSごとの不要ファイル ###
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+### Java関連 ###
+*.class
+
+### 環境変数や秘密情報 ###
+*.env
+.env.local
+.env.*.local
+
+### Lombok生成物（必要に応じて） ###
+lombok.config
+
+### その他、プロジェクトに不要なもの ###
+logs/
