@@ -5,100 +5,98 @@
       ref="formRef"
       label-width="80px"
       class="login-form"
-      :rules="loginRules" 
+      :rules="loginRules"
     >
-      <h2>用户登录</h2>
-      <el-form-item label="用户名" prop="username">
+      <h2>ユーザーログイン</h2>
+      <el-form-item label="ユーザー名" prop="username">
         <el-input
           v-model="loginForm.username"
           ref="username"
           name="username"
           autocomplete="off"
-          placeholder="请输入用户名"
+          placeholder="ユーザー名を入力してください"
         ></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="userPwd">
+      <el-form-item label="パスワード" prop="userPwd">
         <el-input
           type="password"
           v-model="loginForm.userPwd"
           autocomplete="off"
-          placeholder="请输入密码"
+          placeholder="パスワードを入力してください"
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click.native.prevent="login">登录</el-button>
-        <el-button type="primary" @click="toRegister">注册</el-button>
+        <el-button type="success" @click.native.prevent="login">ログイン</el-button>
+        <el-button type="primary" @click="toRegister">新規登録</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script lang="ts">
- import { defineComponent } from 'vue'
-  export default  defineComponent({
-    name:'Login'
-  })
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'Login'
+})
 </script>
+
 <script lang="ts" setup>
 import { ref } from "vue"
-import { useUserInfoStore } from '../../stores/userInfo';
+import { useUserInfoStore } from '../../stores/userInfo'
 
-import type { FormInstance } from 'element-plus';
+import type { FormInstance } from 'element-plus'
 import { useRouter } from 'vue-router'
+
 const userInfoStore = useUserInfoStore()
 const router = useRouter()
 const formRef = ref<FormInstance>()
 const loading = ref(false)
-//账号密码参数
+
+// アカウントとパスワードのパラメータ
 const loginForm = ref({
-      username: "zhangsan",
-      userPwd: "123456",
+  username: "zhangsan",
+  userPwd: "123456",
 })
-// 校验规则
+
+// ユーザー名のバリデーションルール
 const validateUsername = (rule: any, value: any, callback: any) => {
   if (value.length < 4) {
-    callback(new Error('用户名长度不能小于4位'))
+    callback(new Error('ユーザー名は4文字以上で入力してください'))
   } else {
     callback()
   }
 }
-// 校验规则
+
+// パスワードのバリデーションルール
 const validatePassword = (rule: any, value: any, callback: any) => {
   if (value.length < 6) {
-    callback(new Error('密码长度不能小于6位'))
+    callback(new Error('パスワードは6文字以上で入力してください'))
   } else {
     callback()
   }
 }
-// 校验规则
+
+// フォームバリデーションルール定義
 const loginRules = {
   username: [{ required: true, validator: validateUsername }],
   userPwd: [{ required: true, trigger: 'blur', validator: validatePassword }]
 }
-//点击登录的回调
+
+// 「ログイン」ボタンの処理
 const login = async () => {
-  // console.log('点击登录');
   await formRef.value?.validate()
   loading.value = true
   try {
-    // await getUserInfo(loginForm.value)
     await userInfoStore.login(loginForm.value)
-    router.push({ name: "HeadlineNews" });
+    router.push({ name: "HeadlineNews" })
   } finally {
     loading.value = false
   }
-  // loading.value = true
-  // const { username, userPwd } = loginForm.value
-  // try {
-  //   await userInfoStore.login(username, userPwd)
-  //   router.push({ path: redirect.value || '/' })
-  // } finally {
-  //   loading.value = false
-  // }
 }
 
-const toRegister = ()=> {
-  router.push({ name: "Register" });
+// 「新規登録」ボタンの処理
+const toRegister = () => {
+  router.push({ name: "Register" })
 }
 </script>
 
