@@ -1,46 +1,42 @@
-
 import { defineStore } from 'pinia';
 import { getToken, removeToken, setToken } from '../utils/token-utils';
-import { getLogin,getUserInfo } from '../api/index';
-
+import { getLogin, getUserInfo } from '../api/index';
 
 /**
- * 用户信息
- * @methods setUserInfos 设置用户信息
+ * ユーザー情報ストア
+ * @methods setUserInfos ユーザー情報を設定する
  */
 export const useUserInfoStore = defineStore('userInfo', {
-
-	state: () => ({
+  state: () => ({
     token: getToken(),
     nickName: '',
     uid: '',
   }),
 
-	actions: {
-    // 登陆的异步action
-    async login (loginForm) {
-       // 发送登陆的请求
+  actions: {
+    // ログイン処理の非同期アクション
+    async login(loginForm) {
+      // ログインリクエストを送信
       const result = await getLogin(loginForm)
-      // 请求成功后, 取出token保存  pinia和local中
+      // リクエスト成功後、トークンを取得して pinia と localStorage に保存
       const token = result.token
       
       this.token = token
       setToken(token)
     },
-    async getInfo () {
+
+    async getInfo() {
       const result = await getUserInfo()
       this.nickName = result.loginUser.nickName
       this.uid = result.loginUser.uid
     },
-    initUserInfo(){
+
+    // ユーザー情報の初期化
+    initUserInfo() {
       removeToken()
       this.nickName = ""
       this.uid = ""
       console.log('1111111111');
-      
     }
-
   },
-  
-
 });
