@@ -90,4 +90,78 @@ const validateUsername = (rule: any, value: any, callback: any) => {
 }
 
 // パスワードのバリデーション
-const validatePasswo
+const validatePassword = (rule: any, value: any, callback: any) => {
+  if (value.length < 6) {
+    callback(new Error('パスワードは6文字以上で入力してください'))
+  } else {
+    callback()
+  }
+}
+
+// パスワード確認のバリデーション
+const validateConfirmPassword = (rule: any, value: any, callback: any) => {
+  if (value.length < 6) {
+    callback(new Error('パスワードは6文字以上で入力してください'))
+  } else {
+    callback()
+  }
+}
+
+// 氏名のバリデーション
+const validateNickName = (rule: any, value: any, callback: any) => {
+  if (value.length >= 2 && value.length <= 6) {
+    callback()
+  } else {
+    callback(new Error('氏名は2〜6文字で入力してください'))
+  }
+}
+
+// フォームバリデーションルール
+const registerRules = {
+  nickName: [{ required: true, trigger: 'blur', validator: validateNickName }],
+  username: [{ required: true, validator: validateUsername }],
+  userPwd: [{ required: true, trigger: 'blur', validator: validatePassword }],
+  confirmPassword: [{ required: true, trigger: 'blur', validator: validateConfirmPassword }]
+}
+
+// 「登録」ボタンの処理
+const register = async () => {
+  await formRef.value?.validate()
+  if (registerForm.value.userPwd === registerForm.value.confirmPassword) {
+    await registerValidateApi(registerForm.value.username)
+    const obj = {
+      username: registerForm.value.username,
+      userPwd: registerForm.value.userPwd,
+      nickName: registerForm.value.nickName
+    }
+    await registerApi(obj)
+    formRef.value?.resetFields()
+    ElMessage.success("登録が成功しました")
+  } else {
+    return ElMessage.error("パスワードと確認パスワードが一致しません")
+  }
+}
+
+// 「ログインへ」ボタンの処理
+const goLogin = () => {
+  router.push({ path: "/login" })
+}
+
+// 「リセット」ボタンの処理
+const resetForm = () => {
+  formRef.value?.resetFields()
+}
+</script>
+
+<style scoped>
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.register-form {
+  width: 400px;
+  text-align: center;
+}
+</style>
