@@ -5,8 +5,6 @@ import pinia from '../stores';
 import { getToken, removeToken } from '../utils/token-utils';
 import { ElMessage } from 'element-plus';
 
-
-
 const router = createRouter({
   history: createWebHistory(),
   routes: staticRoutes,
@@ -14,7 +12,7 @@ const router = createRouter({
 
 const userInfoStore = useUserInfoStore(pinia)
 
-//全局前置守卫
+// グローバルナビゲーションガード（前）
 router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const userInfo = !!userInfoStore.nickName
@@ -22,26 +20,23 @@ router.beforeEach(async (to, from, next) => {
     if (to.path == "/login") {
       next({ path: "/" })
     } else {
-       if (userInfo) {
-      next()
-       } else {
-         try {
-        await userInfoStore.getInfo()
-       next()
-      } catch (error) {
-        removeToken()
+      if (userInfo) {
+        next()
+      } else {
+        try {
+          await userInfoStore.getInfo()
+          next()
+        } catch (error) {
+          removeToken()
+        }
       }
     }
-    }
   } else {
-   next()
+    next()
   }
 });
 
-// //使用全局后置钩子配置关闭进度条
-// router.afterEach(() => {
-//   NProgress.done();
-// });
 
-// 导出路由
+
+// ルーターをエクスポート
 export default router;
