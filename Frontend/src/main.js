@@ -10,12 +10,9 @@ import pinia from './stores';
 const app = createApp(App)
 app.config.globalProperties.Bus = mitt()
 
-
-
 app.use(ElementPlus, {
     locale: zhCn,
 })
 app.use(pinia)
 app.use(router)
 app.mount('#app')
-

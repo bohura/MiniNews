@@ -1,22 +1,19 @@
 <template>
   <div class="headerContainer">
-    <!-- ヘッダーの左エリア -->
+    <!-- ヘッダー左側エリア -->
     <div class="left">
       <ul>
-        <li @click="HighlightHandler(index)" v-for="(item,index) in findAllTypeList" :key="item.tid">
+        <li @click="HighlightHandler(index,)"  v-for="(item,index) in findAllTypeList" :key="item.tid">
           <a :class="{ active: item.isHighlight }" href="javascript:;">{{item.tname}}</a>
         </li>
       </ul>
     </div>
-    <!-- ヘッダーの右エリア -->
+    <!-- ヘッダー右側エリア -->
     <div class="right">
       <div class="rightInput" style="margin-right: 50px;">
-        <el-input v-model="keywords" placeholder="最新ニュースを検索"></el-input>
+        <el-input v-model="keywords" placeholder="最新のヘッドラインを検索"></el-input>
       </div>
-
-      <!-- ログイン済みの表示 -->
       <div class="btn-dropdown">
-        <!-- 未ログイン時の表示 -->
         <div v-if="nickName" style="display: flex; justify-content: center; align-items: center;">
           <el-dropdown>
             <el-button type="primary">
@@ -24,7 +21,7 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="handlerNews">ニュースを投稿する</el-dropdown-item>
+                <el-dropdown-item @click="handlerNews">ニュースを投稿</el-dropdown-item>
                 <el-dropdown-item>マイページ</el-dropdown-item>
                 <el-dropdown-item>閲覧履歴</el-dropdown-item>
                 <el-dropdown-item @click="Logout">ログアウト</el-dropdown-item>
@@ -34,7 +31,7 @@
         </div>
         <div v-else class="containerButton">
           <el-button size="small" style="background: #212529; color: #aea7a2" @click="toLogin">ログイン</el-button>
-          <el-button size="small" style="background: #ffc107; color: #684802" @click="toRegister">新規登録</el-button>
+          <el-button size="small" style="background: #ffc107; color: #684802" @click="toRegister">登録</el-button>
         </div>
       </div>
     </div>
@@ -50,36 +47,31 @@ export default defineComponent({
 
 <script setup>
 import { getfindAllTypes, isUserOverdue } from '../api/index'
-import { ref, onMounted , getCurrentInstance ,watch, onUpdated } from "vue"
+import { ref, onMounted , getCurrentInstance ,watch, onUpdated} from "vue"
 import { useRouter } from 'vue-router'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { removeToken } from '../utils/token-utils' 
 import pinia from '../stores/index';
 import { useUserInfoStore } from '../stores/userInfo'
-
 const userInfoStore = useUserInfoStore(pinia)
 const nickName = ref("")
 const { Bus } = getCurrentInstance().appContext.config.globalProperties
 const router = useRouter()
-const keywords = ref("") // 最新ニュース検索のキーワード
-// 検索キーワードを監視し、HeadlineNewsコンポーネントへ送信
+const keywords = ref("")
+// 検索キーワードの変化を監視し、HeadlineNewsコンポーネントにデータを渡す
 watch(keywords, (newVal) => {
   Bus.emit('keyword', newVal)
 })
-
-const findAllTypeList = ref([]) // 全てのカテゴリを取得
-
+const findAllTypeList = ref([])
 // ログインページへ遷移
 const toLogin = () => {
   router.push({ name: "Login" });
 }
-
-// 新規登録ページへ移動
+// 登録ページへ遷移
 const toRegister = () => {
   router.push({ name: "Register" });
 }
-
-// カテゴリ一覧を取得して表示
+// 全カテゴリ取得
 const getList = async () => {
   let result = await getfindAllTypes()
   result.forEach((item) => {
@@ -87,24 +79,20 @@ const getList = async () => {
     item.tname = item.tname
     item.isHighlight = false
   })
-  // 「ミニニュース」を先頭に追加
   result.unshift({
     isHighlight: true,
     tid: 0,
-    tname: "ミニニュース"
+    tname: "ミニヘッドライン"
   })
   findAllTypeList.value = result
 }
-
-// ページマウント時の処理
 onUpdated(() => {
   nickName.value = userInfoStore.nickName
 })
 onMounted(() => {
   getList()
 })
-
-// ハイライト切り替え処理（排他）
+// 高亮切替コールバック
 const HighlightHandler = (index) => {
   findAllTypeList.value.forEach((item) => {
     item.isHighlight = false
@@ -112,16 +100,14 @@ const HighlightHandler = (index) => {
   findAllTypeList.value[index].isHighlight = true
   Bus.emit('tid', findAllTypeList.value[index].tid)
 }
-
-// ログアウト処理
+// ログアウトコールバック
 const Logout = () => {
   removeToken()
   userInfoStore.initUserInfo()
   nickName.value = ""
   router.go({ name: "HeadlineNews" });
 }
-
-// ニュース投稿ボタンの処理
+// ニュース投稿ページへ遷移
 const handlerNews = async () => {
   await isUserOverdue()
   router.push({ name: "addOrModifyNews" });
@@ -133,9 +119,11 @@ const handlerNews = async () => {
   vertical-align: top;
   width: 100px;
 }
+
 .el-dropdown+.el-dropdown {
   margin-left: 15px;
 }
+
 .el-icon-arrow-down {
   font-size: 12px;
 }
@@ -174,13 +162,13 @@ const handlerNews = async () => {
     flex-wrap: nowrap;
     .rightInput {
       display: flex;
-      align-items: center;
+       align-items: center;
       :deep(.el-input__inner) {
         height: 30px;
         width: 150px;
       }
     }
-    .btn-dropdown {
+    .btn-dropdown{
       display: flex;
       align-items: center;
     }
@@ -192,6 +180,8 @@ const handlerNews = async () => {
     }
   }
 }
+
+
 .example-showcase .el-dropdown + .el-dropdown {
   margin-left: 15px;
 }

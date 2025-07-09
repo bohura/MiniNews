@@ -8,13 +8,13 @@
       :rules="registerRules"
     >
       <h2>ユーザー登録</h2>
-      <el-form-item label="氏名" prop="nickName">
+      <el-form-item label="名前" prop="nickName">
         <el-input
           v-model="registerForm.nickName"
           autocomplete="off"
           ref="nickName"
           name="nickName"
-          placeholder="氏名を入力してください"
+          placeholder="名前を入力してください"
         ></el-input>
       </el-form-item>
       <el-form-item label="ユーザー名" prop="username">
@@ -36,14 +36,14 @@
           placeholder="パスワードを入力してください"
         ></el-input>
       </el-form-item>
-      <el-form-item label="パスワード確認" prop="confirmPassword">
+      <el-form-item label="パスワード確認"  prop="confirmPassword">
         <el-input
           type="password"
           v-model="registerForm.confirmPassword"
           autocomplete="off"
           ref="confirmPassword"
           name="confirmPassword"
-          placeholder="もう一度パスワードを入力してください"
+          placeholder="パスワードを再入力してください"
         ></el-input>
       </el-form-item>
       <el-form-item>
@@ -57,66 +57,53 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-export default defineComponent({
-  name: 'Register'
+export default  defineComponent({
+  name:'Register'
 })
 </script>
-
 <script lang="ts" setup>
 import { ref } from "vue"
 import { useRouter } from 'vue-router'
-import { ElMessage, FormInstance } from 'element-plus'
+import { ElMessage, FormInstance } from 'element-plus';
 import { registerValidateApi, registerApi } from "../../api/index"
-
 const router = useRouter()
-
-// 登録フォームの初期値
+// 登録パラメータ初期化
 const registerForm = ref({
   username: "",
   userPwd: "",
   confirmPassword: "",
-  nickName: ''
+  nickName:''
 })
-
 const formRef = ref<FormInstance>()
-
-// ユーザー名のバリデーション
+// バリデーションルール
 const validateUsername = (rule: any, value: any, callback: any) => {
   if (value.length < 4) {
-    callback(new Error('ユーザー名は4文字以上で入力してください'))
+    callback(new Error('ユーザー名は4文字以上でなければなりません'))
   } else {
     callback()
   }
 }
-
-// パスワードのバリデーション
 const validatePassword = (rule: any, value: any, callback: any) => {
   if (value.length < 6) {
-    callback(new Error('パスワードは6文字以上で入力してください'))
+    callback(new Error('パスワードは6文字以上でなければなりません'))
   } else {
     callback()
   }
 }
-
-// パスワード確認のバリデーション
 const validateConfirmPassword = (rule: any, value: any, callback: any) => {
   if (value.length < 6) {
-    callback(new Error('パスワードは6文字以上で入力してください'))
+    callback(new Error('パスワードは6文字以上でなければなりません'))
   } else {
     callback()
   }
 }
-
-// 氏名のバリデーション
 const validateNickName = (rule: any, value: any, callback: any) => {
-  if (value.length >= 2 && value.length <= 6) {
+  if (value.length >= 2  && value.length  <= 6  ) {
     callback()
   } else {
-    callback(new Error('氏名は2〜6文字で入力してください'))
+    callback(new Error('名前は2～6文字でなければなりません'))
   }
 }
-
-// フォームバリデーションルール
 const registerRules = {
   nickName: [{ required: true, trigger: 'blur', validator: validateNickName }],
   username: [{ required: true, validator: validateUsername }],
@@ -124,30 +111,31 @@ const registerRules = {
   confirmPassword: [{ required: true, trigger: 'blur', validator: validateConfirmPassword }]
 }
 
-// 「登録」ボタンの処理
+// 登録ボタンのコールバック
 const register = async () => {
   await formRef.value?.validate()
-  if (registerForm.value.userPwd === registerForm.value.confirmPassword) {
+  if (registerForm.value.userPwd == registerForm.value.confirmPassword) {
     await registerValidateApi(registerForm.value.username)
     const obj = {
-      username: registerForm.value.username,
-      userPwd: registerForm.value.userPwd,
-      nickName: registerForm.value.nickName
+      username: "",
+      userPwd: "",
+      nickName: ''
     }
+    obj.username = registerForm.value.username
+    obj.userPwd = registerForm.value.userPwd
+    obj.nickName = registerForm.value.nickName
     await registerApi(obj)
     formRef.value?.resetFields()
-    ElMessage.success("登録が成功しました")
-  } else {
-    return ElMessage.error("パスワードと確認パスワードが一致しません")
-  }
+    ElMessage.success("登録成功")
+    } else {
+      return ElMessage.error("パスワードと確認パスワードが一致しません")
+    }
 }
-
-// 「ログインへ」ボタンの処理
+// ログインページへ遷移
 const goLogin = () => {
-  router.push({ path: "/login" })
+  router.push({path:"/login"})
 }
-
-// 「リセット」ボタンの処理
+// フォームリセット
 const resetForm = () => {
   formRef.value?.resetFields()
 }

@@ -1,16 +1,17 @@
+
 export const staticRoutes = [
   {
     path: "/",
     redirect: "/headlinenews",
   },
   {
-    // ヘッドラインニュース
+    // ヘッドライン
     path: "/headlinenews",
     component: () => import("../pages/HeadlineNews/index.vue"),
     name: "HeadlineNews",
   },
   {
-    // ヘッドラインの詳細
+    // ヘッドライン詳細
     path: "/detail",
     component: () => import("../pages/Detail/index.vue"),
     name: "Detail",
@@ -22,13 +23,13 @@ export const staticRoutes = [
     name: "Login",
   },
   {
-    // 新規登録
+    // 登録
     path: "/register",
     component: () => import("../pages/Register/index.vue"),
     name: "Register",
   },
-  {
-    // ニュース投稿・編集ページ
+   {
+    // ニュース投稿ページ
     path: "/addormodifynews",
     component: () => import("../pages/addOrModifyNews/index.vue"),
     name: "addOrModifyNews",

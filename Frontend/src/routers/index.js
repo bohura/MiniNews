@@ -12,7 +12,7 @@ const router = createRouter({
 
 const userInfoStore = useUserInfoStore(pinia)
 
-// グローバルナビゲーションガード（前）
+// グローバル前置ガード
 router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const userInfo = !!userInfoStore.nickName
@@ -20,23 +20,26 @@ router.beforeEach(async (to, from, next) => {
     if (to.path == "/login") {
       next({ path: "/" })
     } else {
-      if (userInfo) {
-        next()
-      } else {
-        try {
-          await userInfoStore.getInfo()
-          next()
-        } catch (error) {
-          removeToken()
-        }
+       if (userInfo) {
+      next()
+       } else {
+         try {
+        await userInfoStore.getInfo()
+       next()
+      } catch (error) {
+        removeToken()
       }
     }
+    }
   } else {
-    next()
+   next()
   }
 });
 
-
+// // グローバル後置フックでプログレスバーを閉じる
+// router.afterEach(() => {
+//   NProgress.done();
+// });
 
 // ルーターをエクスポート
 export default router;

@@ -1,29 +1,27 @@
 <template>
   <div class="container">
     <div class="listItem">
-      <!-- 各ヘッドラインニュースのリスト項目 -->
+      <!-- 各ヘッドラインリスト -->
       <div class="containerItem" v-for="item in pageData" :key="item.hid">
         <div>
           <span class="text">{{ item.title }}</span>
         </div>
         <div class="detail">
-          <span>{{ item.type == 1 ? "ニュース" : item.type == 2 ? "スポーツ" : item.type == 3 ? "エンタメ" : item.type == 4 ? "テクノロジー" : "その他" }}</span>
-          <span>{{ item.pageViews }}閲覧</span>
-          <span>{{ item.pastHours }}時間前</span>
+          <span>{{ item.type == 1 ? "ニュース":item.type == 2 ? "スポーツ": item.type == 3 ? "エンタメ": item.type == 4 ? "テクノロジー" : "その他" }}</span>
+          <span>{{item.pageViews}}閲覧</span>
+          <span>{{item.pastHours}}時間前</span>
         </div>
         <div>
           <el-button @click="toDetail(item.hid)" size="small"
             style="background: #198754; margin-left: 15px; color: #bbd3dc">全文を見る</el-button>
-          <el-popconfirm v-if="item.publisher == type" @confirm="handlerDelete(item.hid)" :title="`「${item.title}」を削除してもよろしいですか？`">
+          <el-popconfirm v-if="item.publisher == type" @confirm="handlerDelete(item.hid)" :title="`本当に${item.title}を削除しますか?`">
             <template #reference>
               <el-button size="small" style="background: #dc3545; color: #bbd3dc">削除</el-button>
             </template>
           </el-popconfirm>
-
-          <el-button @click="Modify(item.hid)" v-if="item.publisher == type" size="small" style="background: #212529; color: #bbd3dc">編集</el-button>
+          <el-button @click="Modify(item.hid)" v-if="item.publisher == type"  size="small" style="background: #212529; color: #bbd3dc">修正</el-button>
         </div>
       </div>
-
       <!-- ページネーション -->
       <div style="margin-top: 20px">
         <el-pagination 
@@ -40,35 +38,32 @@
   </div>
 </template>
 
-<script>
-import { getfindNewsPageInfo, removeByHid } from "../../api/index"
+<script >
+import { getfindNewsPageInfo , removeByHid } from "../../api/index"
 import { defineComponent } from 'vue'
-export default defineComponent({
-  name: 'HeadlineNews'
+export default  defineComponent({
+  name:'HeadlineNews'
 })
 </script>
-
-<script setup>
+<script  setup>
 import { ref, onMounted, getCurrentInstance, watch } from "vue"
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import pinia from '../../stores/index';
 import { useUserInfoStore } from '../../stores/userInfo'
-
-const { Bus } = getCurrentInstance().appContext.config.globalProperties
+const  { Bus } = getCurrentInstance().appContext.config.globalProperties
 const userInfoStore = useUserInfoStore(pinia)
 const router = useRouter()
 const type = userInfoStore.uid
-
-const findNewsPageInfo = ref({
-  keyWords: "", // タイトルのキーワード検索
-  type: 0,      // ニュースの種類
-  pageNum: 1,   // ページ番号
-  pageSize: 5,  // ページサイズ
-})
-
-const totalSize = ref(0) // ページ全体の件数
-
+const findNewsPageInfo = ref(
+  {
+    keyWords: "",
+    type: 0,
+    pageNum: 1,
+    pageSize: 5,
+  }
+)
+const totalSize = ref(0)
 // 初期リストデータ
 const pageData = ref([{
   hid: null,
@@ -78,51 +73,42 @@ const pageData = ref([{
   title: "",
   type: null
 }])
-
-// Headerコンポーネントからキーワードを受信
+// headerコンポーネントから検索データを受信
 Bus.on('keyword', (keywords) => {
   findNewsPageInfo.value.keyWords = keywords
 })
-
-// HeaderからタイプID（tid）を受信
+// headerで高亮切替時にtidを受信
 Bus.on('tid', (type) => {
   findNewsPageInfo.value.type = type
 })
-
-// 検索条件の変更を監視し、変更時に再取得
+// typeの変化を監視し、リストデータを再取得
 watch(() => findNewsPageInfo.value, () => {
   getPageList()
 }, {
   deep: true,
 })
-
-// ページネーション対応のリストデータ取得
+// ページネーションデータ取得
 const getPageList = async () => {
   let result = await getfindNewsPageInfo(findNewsPageInfo.value)
   pageData.value = result.pageInfo.pageData
-  findNewsPageInfo.value.pageNum = result.pageInfo.pageNum
-  findNewsPageInfo.value.pageSize = result.pageInfo.pageSize
-  totalSize.value = +result.pageInfo.totalSize
+ findNewsPageInfo.value.pageNum = result.pageInfo.pageNum
+ findNewsPageInfo.value.pageSize = result.pageInfo.pageSize
+ totalSize.value = +result.pageInfo.totalSize
 }
-
-// マウント時にリスト取得
 onMounted(() => {
   getPageList()
 })
-
-// 「全文を見る」ボタンの処理
+// 詳細ページへ遷移
 const toDetail = (hid) => {
-  router.push({ name: "Detail", query: { hid } });
+  router.push({ name: "Detail" ,query:{ hid }});
 }
-
-// 削除処理
+// 削除ボタンのコールバック
 const handlerDelete = async (id) => {
   await removeByHid(id)
-  ElMessage.success('削除に成功しました！')
+  ElMessage.success('削除成功!')
   getPageList()
 }
-
-// 編集ボタンの処理
+// 修正ボタンのコールバック
 const Modify = (hid) => {
   router.push({ name: "addOrModifyNews", query: { hid } });
 }
@@ -136,7 +122,6 @@ const Modify = (hid) => {
   flex-direction: column;
   align-items: center;
 
-  // リストスタイル
   .listItem {
     .containerItem {
       margin-top: 20px;
