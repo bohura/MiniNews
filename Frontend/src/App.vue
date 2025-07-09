@@ -16,8 +16,8 @@ import Header from './components/Header.vue'
 <script  setup>
 import { computed } from "vue"
 import { useRoute } from 'vue-router'
-const route = useRoute() // 路由信息对象
-// 判断是否显示header组件
+const route = useRoute()  // ルート情報オブジェクト
+// Headerコンポーネントを表示するかどうかを判定
  const isHeader =  computed(() => {
     return route.name !== "Login" && route.name !== "Register" && route.name !== "addNews";
 })
