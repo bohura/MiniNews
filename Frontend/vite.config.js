@@ -6,7 +6,7 @@ export default defineConfig(
   () => {
     return{
       plugins: [vue()],
-       // 这个不用一点点写, 但每个配置都要理解
+     
     server: {
       port: 8001,
       open: true,
