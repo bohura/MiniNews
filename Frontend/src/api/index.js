@@ -1,89 +1,94 @@
 import request from "../utils/request/"
 
 // portal/findAllTypes
-//获取分类列表
+// カテゴリ一覧を取得
 export const getfindAllTypes = () => {
   return request.get("portal/findAllTypes");
 };
-// 分页带条件查询所有头条
+
+// 条件付きでニュース一覧をページング取得
 export const getfindNewsPageInfo = (info) => {
-  return request.post("portal/findNewsPage",info);
+  return request.post("portal/findNewsPage", info);
 };
-// 查看头条详情
+
+// ニュース詳細を取得
 export const getshowHeadlineDetail = (id) => {
-    return request({
-        method: "post",
-        url: "portal/showHeadlineDetail",
-        headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-         data:`hid=${id}`
+  return request({
+    method: "post",
+    url: "portal/showHeadlineDetail",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    },
+    data: `hid=${id}`
   });
 };
 
-//删除的回调
+// ニュース削除処理
 // headline/removeByHid
 export const removeByHid = (id) => {
-    return request({
-         method: "post",
-            url: "headline/removeByHid",
-            headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-            },
-            data:`hid=${id}`
-  })
+  return request({
+    method: "post",
+    url: "headline/removeByHid",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    },
+    data: `hid=${id}`
+  });
 };
 
-//登录的接口
+// ログインAPI
 export const getLogin = (info) => {
-  return request.post("user/login",info);
+  return request.post("user/login", info);
 };
-//获取用户信息的接口
-export const getUserInfo = (info) => {
+
+// ユーザー情報を取得
+export const getUserInfo = () => {
   return request.get("user/getUserInfo");
 };
 
-//注册校验的接口  user/checkUserName
+// ユーザー名重複チェックAPI
+// user/checkUserName
 export const registerValidateApi = (username) => {
-    return request({
-         method: "post",
-            url: "user/checkUserName",
-            headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-            },
-            data:`username=${username}`
-  })
-};
-
-// 注册的接口
-export const registerApi = (userInfo) => {
-  return request.post("user/regist",userInfo)
-}
-//判断用户登录过期的接口
-export const isUserOverdue = () => {
-  return request.get("user/checkLogin")
-}
-
-// 修改头条回显的接口
-export const getFindHeadlineByHid = (id) => {
-    return request({
-        method: "post",
-        url: "headline/findHeadlineByHid",
-        headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-         data:`hid=${id}`
+  return request({
+    method: "post",
+    url: "user/checkUserName",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    },
+    data: `username=${username}`
   });
 };
 
-//点击保存修改的回调
+// ユーザー登録API
+export const registerApi = (userInfo) => {
+  return request.post("user/regist", userInfo)
+};
+
+// ログイン状態確認（期限切れチェック）
+export const isUserOverdue = () => {
+  return request.get("user/checkLogin")
+};
+
+// 編集用のニュース取得API
+export const getFindHeadlineByHid = (id) => {
+  return request({
+    method: "post",
+    url: "headline/findHeadlineByHid",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    },
+    data: `hid=${id}`
+  });
+};
+
+// ニュース保存・更新API
 // headline/update
 export const saveOrAddNews = (news) => {
-  return request.post("headline/update",news)
-}
+  return request.post("headline/update", news)
+};
 
+// ニュース公開API
 // headline/publish
 export const issueNews = (news) => {
-  return request.post("headline/publish",news)
-}
-
+  return request.post("headline/publish", news)
+};
